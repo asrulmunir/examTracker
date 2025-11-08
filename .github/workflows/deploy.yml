@@ -1,0 +1,55 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  workflow_dispatch:
+    inputs:
+      admin_password:
+        description: 'Admin Password'
+        required: true
+        default: 'changeme123'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Create KV Namespace
+        id: kv
+        run: |
+          KV_OUTPUT=$(npx wrangler kv namespace create "EXAM_DATA" --env production 2>&1 || true)
+          echo "$KV_OUTPUT"
+          KV_ID=$(echo "$KV_OUTPUT" | grep -oP 'id = "\K[^"]+' || echo "")
+          if [ -z "$KV_ID" ]; then
+            echo "Using existing KV namespace"
+            KV_ID="${{ secrets.KV_NAMESPACE_ID }}"
+          fi
+          echo "kv_id=$KV_ID" >> $GITHUB_OUTPUT
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      
+      - name: Update wrangler.toml
+        run: |
+          sed -i 's/id = ".*"/id = "${{ steps.kv.outputs.kv_id }}"/' wrangler.toml
+          sed -i 's/ADMIN_PASSWORD = ".*"/ADMIN_PASSWORD = "${{ github.event.inputs.admin_password }}"/' wrangler.toml
+      
+      - name: Deploy to Cloudflare Workers
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      
+      - name: Deployment Info
+        run: |
+          echo "✅ Deployment successful!"
+          echo "🌐 Your tracker is live at: https://exam-tracker.YOUR-USERNAME.workers.dev"
+          echo "🔐 Admin panel: https://exam-tracker.YOUR-USERNAME.workers.dev/admin"
+          echo "🔑 Password: ${{ github.event.inputs.admin_password }}"

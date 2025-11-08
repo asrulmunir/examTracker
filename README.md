@@ -2,6 +2,8 @@
 
 A beautiful, customizable exam progress tracker built with Cloudflare Workers + KV. Features an iOS-inspired liquid glass design and admin panel for easy management.
 
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/YOUR-USERNAME/examTracker)
+
 ## ✨ Features
 
 - 🎨 Beautiful iOS liquid glass design
@@ -16,16 +18,31 @@ A beautiful, customizable exam progress tracker built with Cloudflare Workers + 
 
 ## 🚀 Quick Deploy
 
-See [DEPLOY.md](DEPLOY.md) for step-by-step instructions.
+### Option 1: One-Click Deploy (Easiest!)
+See [ONE_CLICK_DEPLOY.md](ONE_CLICK_DEPLOY.md) for GitHub Actions deployment.
 
-**TL;DR:**
+**Steps:**
+1. Fork this repo
+2. Add Cloudflare API token to GitHub Secrets
+3. Run workflow with your password
+4. Done! ✨
+
+### Option 2: Interactive Setup Script
 ```bash
+git clone <repo-url>
+cd examTracker
 npm install
-npx wrangler login
-npx wrangler kv namespace create "EXAM_DATA"
-# Update wrangler.toml with KV ID and password
-npx wrangler deploy
+./setup.sh
 ```
+
+The script will:
+- Login to Cloudflare
+- Create KV namespace automatically
+- Prompt for your password
+- Deploy everything
+
+### Option 3: Manual Deploy
+See [DEPLOY.md](DEPLOY.md) for step-by-step CLI instructions.
 
 ## Demo
 
