@@ -150,7 +150,17 @@
         function getStatus(exam) {
             const now = new Date();
             const examDate = new Date(exam.date + 'T' + exam.time);
-            const endDate = exam.endDate ? new Date(exam.endDate + 'T23:59') : new Date(examDate.getTime() + 3 * 60 * 60 * 1000);
+            
+            // Calculate end time
+            let endDate;
+            if (exam.endTime) {
+                endDate = new Date(exam.date + 'T' + exam.endTime);
+            } else if (exam.endDate) {
+                endDate = new Date(exam.endDate + 'T23:59');
+            } else {
+                // Default: 3 hours after start
+                endDate = new Date(examDate.getTime() + 3 * 60 * 60 * 1000);
+            }
             
             if (now > endDate) return 'completed';
             if (now >= examDate && now <= endDate) return 'inProgress';
