@@ -294,6 +294,7 @@
                                                     <h4 class="font-semibold ${config.text}">${exam.name}</h4>
                                                 </div>
                                                 <p class="text-sm text-gray-600">Code: ${exam.code}</p>
+                                                ${exam.category ? `<p class="text-sm text-gray-600">📚 ${exam.category}</p>` : ''}
                                                 <p class="text-sm text-gray-600">Time: ${exam.time}${exam.endTime ? ' - ' + exam.endTime : ''}</p>
                                                 ${exam.location ? `<p class="text-sm text-gray-600">📍 ${exam.location}</p>` : ''}
                                             </div>
