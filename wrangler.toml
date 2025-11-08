@@ -1,0 +1,20 @@
+name = "exam-tracker"
+main = "src/index.js"
+compatibility_date = "2025-11-08"
+
+[build]
+command = ""
+
+[build.upload]
+format = "modules"
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+
+[[kv_namespaces]]
+binding = "EXAM_DATA"
+id = "6b5f68231bbd4613a4900e10219cf7d3"
+
+[vars]
+ADMIN_PASSWORD = "changeme123"

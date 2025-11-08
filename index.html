@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papan Pemuka Kemajuan SPM 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta http-equiv="refresh" content="1800">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        
+        .glass-dark {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(30px) saturate(200%);
+            -webkit-backdrop-filter: blur(30px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.2);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.75);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 48px 0 rgba(31, 38, 135, 0.25);
+        }
+        
+        .glass-button {
+            background: rgba(99, 102, 241, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .glass-button:hover {
+            background: rgba(79, 70, 229, 0.95);
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+        
+        .status-completed {
+            background: rgba(16, 185, 129, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-progress {
+            background: rgba(59, 130, 246, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .status-upcoming {
+            background: rgba(249, 115, 22, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="glass-dark rounded-3xl p-6 mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Papan Pemuka Kemajuan SPM 2025</h1>
+            <p class="text-gray-700 font-medium">Pantau kemajuan peperiksaan anak anda</p>
+            <div class="mt-4 flex items-center gap-2 text-sm text-gray-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span id="currentTime"></span>
+                <span class="ml-4">• Kemaskini automatik setiap 30 minit</span>
+            </div>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Selesai</p>
+                        <p class="text-3xl font-bold text-green-600" id="completedCount">0</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-400 to-green-600 p-3 rounded-2xl shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Sedang Berlangsung</p>
+                        <p class="text-3xl font-bold text-blue-600" id="inProgressCount">0</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-3 rounded-2xl shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Akan Datang</p>
+                        <p class="text-3xl font-bold text-orange-600" id="upcomingCount">0</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-3 rounded-2xl shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject Selection -->
+        <div class="glass-dark rounded-3xl p-6 mb-6">
+            <div class="flex items-center justify-between mb-4 cursor-pointer" onclick="toggleCollapse()">
+                <h2 class="text-xl font-bold text-gray-800">Pilih Mata Pelajaran</h2>
+                <div class="flex items-center gap-2">
+                    <svg id="collapseIcon" class="w-6 h-6 text-gray-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+            <div id="subjectContent" class="space-y-4">
+                <div class="flex flex-col md:flex-row gap-2">
+                    <button onclick="selectAll(); event.stopPropagation();" class="glass-button px-4 py-2 text-white text-sm font-semibold rounded-xl">
+                        Pilih Semua
+                    </button>
+                    <button onclick="unselectAll(); event.stopPropagation();" class="glass-button px-4 py-2 text-white text-sm font-semibold rounded-xl" style="background: rgba(107, 114, 128, 0.9);">
+                        Nyahpilih Semua
+                    </button>
+                    <input type="text" id="searchSubject" placeholder="Cari mata pelajaran..." onkeyup="searchSubjects()" class="flex-1 px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" onclick="event.stopPropagation();">
+                </div>
+                
+                <!-- Category Tabs -->
+                <div class="flex flex-wrap gap-2" onclick="event.stopPropagation();">
+                    <button onclick="filterCategory('all')" id="cat-all" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-indigo-500 text-white">Semua</button>
+                    <button onclick="filterCategory('core')" id="cat-core" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white text-gray-700">Teras</button>
+                    <button onclick="filterCategory('science')" id="cat-science" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white text-gray-700">Sains</button>
+                    <button onclick="filterCategory('language')" id="cat-language" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white text-gray-700">Bahasa</button>
+                    <button onclick="filterCategory('islamic')" id="cat-islamic" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white text-gray-700">Agama</button>
+                    <button onclick="filterCategory('arts')" id="cat-arts" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white text-gray-700">Seni</button>
+                    <button onclick="filterCategory('social')" id="cat-social" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white text-gray-700">Sosial</button>
+                    <button onclick="filterCategory('technical')" id="cat-technical" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white text-gray-700">Teknikal</button>
+                    <button onclick="filterCategory('vocational')" id="cat-vocational" class="category-tab px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white text-gray-700">Vokasional</button>
+                </div>
+                
+                <div id="subjectSelection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+            </div>
+        </div>
+
+        <!-- Exam Timeline -->
+        <div class="glass-dark rounded-3xl p-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+                <h2 class="text-xl font-bold text-gray-800">Jadual Peperiksaan</h2>
+                <select id="timelineFilter" onchange="filterTimeline()" class="glass-button px-4 py-2 text-white text-sm font-semibold rounded-xl cursor-pointer w-full md:w-auto">
+                    <option value="all">Semua Mata Pelajaran</option>
+                </select>
+            </div>
+            <div id="examTimeline" class="space-y-4"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 text-center text-sm text-gray-700 glass rounded-2xl p-4">
+            <p>Jika terdapat sebarang kesalahan atau permintaan tambahan subjek dalam jadual, sila emel ke: <a href="mailto:spmdash@icloud.com" class="text-indigo-600 hover:text-indigo-800 font-semibold">spmdash@icloud.com</a>. Terima kasih.</p>
+        </div>
+    </div>
+
+    <script>
+        const exams = [
+            // Speaking Tests
+            { code: "1103/3", name: "Bahasa Melayu (Bertutur)", date: "2025-11-03", endDate: "2025-11-06", time: "08:00", endTime: "16:10", category: "Bertutur" },
+            { code: "1119/3", name: "Bahasa Inggeris (Bertutur)", date: "2025-11-10", endDate: "2025-11-13", time: "08:00", endTime: "16:15", category: "Bertutur" },
+            
+            // Practical Tests
+            { code: "4531/3", name: "Fizik (Amali)", date: "2025-11-17", time: "08:00", endTime: "13:00", category: "Amali" },
+            { code: "4541/3", name: "Kimia (Amali)", date: "2025-11-18", time: "08:00", endTime: "13:00", category: "Amali" },
+            { code: "4551/3", name: "Biologi (Amali)", date: "2025-11-19", time: "08:00", endTime: "13:00", category: "Amali" },
+            { code: "4561/3", name: "Sains Tambahan (Amali)", date: "2025-11-19", time: "08:15", endTime: "14:15", category: "Amali" },
+            
+            // Listening Tests
+            { code: "1103/4", name: "Bahasa Melayu (Mendengar)", date: "2025-11-20", time: "08:30", endTime: "09:30", category: "Mendengar" },
+            { code: "1119/4", name: "Bahasa Inggeris (Mendengar)", date: "2025-11-20", time: "10:30", endTime: "11:40", category: "Mendengar" },
+            
+            // Written Exams
+            { code: "1103/1", name: "Bahasa Melayu Kertas 1", date: "2025-11-25", time: "08:15", endTime: "10:15", category: "Bertulis" },
+            { code: "1103/2", name: "Bahasa Melayu Kertas 2", date: "2025-11-25", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "2611/1", name: "Pendidikan Seni Visual Kertas 1", date: "2025-11-25", time: "11:45", endTime: "12:45", category: "Bertulis" },
+            { code: "1119/1", name: "Bahasa Inggeris Kertas 1", date: "2025-11-26", time: "08:15", endTime: "09:45", category: "Bertulis" },
+            { code: "1119/2", name: "Bahasa Inggeris Kertas 2", date: "2025-11-26", time: "11:15", endTime: "12:45", category: "Bertulis" },
+            { code: "5226", name: "Tasawwur Islam", date: "2025-11-26", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "1249/1", name: "Sejarah Kertas 1", date: "2025-11-27", time: "08:15", endTime: "09:15", category: "Bertulis" },
+            { code: "1249/2", name: "Sejarah Kertas 2", date: "2025-11-27", time: "10:30", endTime: "13:00", category: "Bertulis" },
+            { code: "1449/1", name: "Matematik Kertas 1", date: "2025-12-01", time: "08:15", endTime: "09:45", category: "Bertulis" },
+            { code: "1449/2", name: "Matematik Kertas 2", date: "2025-12-01", time: "10:45", endTime: "13:15", category: "Bertulis" },
+            { code: "1223/1", name: "Pendidikan Islam Kertas 1", date: "2025-12-02", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "1225", name: "Pendidikan Moral", date: "2025-12-02", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "5228", name: "Pendidikan Syariah Islamiah", date: "2025-12-02", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "5402/1", name: "Al-Syariah Kertas 1", date: "2025-12-02", time: "08:15", endTime: "10:30", category: "Bertulis" },
+            { code: "5302/2", name: "Maharat Al-Quran Kertas 2", date: "2025-12-02", time: "14:30", endTime: "16:00", category: "Bertulis" },
+            { code: "9378", name: "Bahasa Punjabi", date: "2025-12-02", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "3729/1", name: "Pertanian Kertas 1", date: "2025-12-02", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "2611/2", name: "Pendidikan Seni Visual Kertas 2", date: "2025-12-03", time: "08:15", endTime: "11:15", category: "Bertulis" },
+            { code: "5404/1", name: "Manahij al-'Ulum al-Islamiah Kertas 1", date: "2025-12-03", time: "08:15", endTime: "10:30", category: "Bertulis" },
+            { code: "2621/1", name: "Pendidikan Muzik Kertas 1", date: "2025-12-03", time: "14:30", endTime: "16:00", category: "Bertulis" },
+            { code: "3763/1", name: "Reka Cipta Kertas 1", date: "2025-12-03", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "1511/1", name: "Sains Kertas 1", date: "2025-12-04", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "1511/2", name: "Sains Kertas 2", date: "2025-12-04", time: "10:30", endTime: "13:00", category: "Bertulis" },
+            { code: "4531/1", name: "Fizik Kertas 1", date: "2025-12-04", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "4531/2", name: "Fizik Kertas 2", date: "2025-12-04", time: "10:30", endTime: "13:00", category: "Bertulis" },
+            { code: "3769/1", name: "Sains Rumah Tangga Kertas 1", date: "2025-12-04", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "4541/1", name: "Kimia Kertas 1", date: "2025-12-08", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "4541/2", name: "Kimia Kertas 2", date: "2025-12-08", time: "10:45", endTime: "13:15", category: "Bertulis" },
+            { code: "4561/1", name: "Sains Tambahan Kertas 1", date: "2025-12-08", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "4561/2", name: "Sains Tambahan Kertas 2", date: "2025-12-08", time: "10:45", endTime: "13:15", category: "Bertulis" },
+            { code: "2206", name: "Kesusasteraan Inggeris", date: "2025-12-09", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "2216/1", name: "Kesusasteraan Melayu Komunikatif Kertas 1", date: "2025-12-09", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "2280/1", name: "Geografi Kertas 1", date: "2025-12-09", time: "11:45", endTime: "13:00", category: "Bertulis" },
+            { code: "2280/2", name: "Geografi Kertas 2", date: "2025-12-09", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "3766/1", name: "Perniagaan Kertas 1", date: "2025-12-10", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "3766/2", name: "Perniagaan Kertas 2", date: "2025-12-10", time: "10:45", endTime: "13:00", category: "Bertulis" },
+            { code: "4551/1", name: "Biologi Kertas 1", date: "2025-12-10", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "4551/2", name: "Biologi Kertas 2", date: "2025-12-10", time: "10:45", endTime: "13:15", category: "Bertulis" },
+            { code: "3472/1", name: "Matematik Tambahan Kertas 1", date: "2025-12-15", time: "08:15", endTime: "10:15", category: "Bertulis" },
+            { code: "3472/2", name: "Matematik Tambahan Kertas 2", date: "2025-12-15", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "4572/1", name: "Sains Sukan Kertas 1", date: "2025-12-16", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "4572/2", name: "Sains Sukan Kertas 2", date: "2025-12-16", time: "10:30", endTime: "13:00", category: "Bertulis" },
+            { code: "5401/1", name: "Usul al-Din Kertas 1", date: "2025-12-16", time: "08:15", endTime: "10:30", category: "Bertulis" },
+            { code: "3754/1", name: "Pengajian Keusahawanan Kertas 1", date: "2025-12-16", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "3760/1", name: "Pengajian Kejuruteraan Mekanikal Kertas 1", date: "2025-12-16", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "3761/1", name: "Pengajian Kejuruteraan Awam Kertas 1", date: "2025-12-16", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "3762/1", name: "Pengajian Kejuruteraan Elektrik dan Elektronik Kertas 1", date: "2025-12-16", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "3768/1", name: "Asas Kelestarian Kertas 1", date: "2025-12-16", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "3756/1", name: "Prinsip Perakaunan Kertas 1", date: "2025-12-17", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "3756/2", name: "Prinsip Perakaunan Kertas 2", date: "2025-12-17", time: "10:45", endTime: "13:15", category: "Bertulis" },
+            { code: "3756/4", name: "Prinsip Perakaunan Kertas 4", date: "2025-12-17", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "5405/1", name: "Al-Adab wa al-Balaghah Kertas 1", date: "2025-12-17", time: "14:30", endTime: "16:45", category: "Bertulis" },
+            { code: "9221", name: "Bible Knowledge", date: "2025-12-18", time: "08:15", endTime: "10:15", category: "Bertulis" },
+            { code: "5227/1", name: "Pendidikan Al-Quran dan Al-Sunnah Kertas 1", date: "2025-12-18", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "5303/1", name: "Turath Al-Quran dan Al-Sunnah Kertas 1", date: "2025-12-18", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "3770/1", name: "Sains Komputer Kertas 1", date: "2025-12-18", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "3767/1", name: "Ekonomi Kertas 1", date: "2025-12-22", time: "08:15", endTime: "09:30", category: "Bertulis" },
+            { code: "3767/2", name: "Ekonomi Kertas 2", date: "2025-12-22", time: "10:45", endTime: "13:00", category: "Bertulis" },
+            { code: "3759/1", name: "Lukisan Kejuruteraan Kertas 1", date: "2025-12-22", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "3771/1", name: "Grafik Komunikasi Teknikal Kertas 1", date: "2025-12-22", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "7101/1", name: "Pembinaan Domestik Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7103/1", name: "Kerja Paip Domestik Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7104/1", name: "Pendawaian Domestik Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7105/1", name: "Kimpalan Arka dan Gas Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7106/1", name: "Menservis Automobil Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7107/1", name: "Menservis Motosikal Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7108/1", name: "Menservis Peralatan Penyejukan dan Penyamanan Udara Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7109/1", name: "Menservis Peralatan Elektrik Domestik Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7110/1", name: "Pembuatan Perabot Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7201/1", name: "Rekaan dan Jahitan Pakaian Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7202/1", name: "Katering dan Penyajian Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7203/1", name: "Pemprosesan Makanan Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7205/1", name: "Asuhan dan Pendidikan Awal Kanak-Kanak Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7207/1", name: "Penjagaan Muka dan Penggayaan Rambut Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7208/1", name: "Gerontologi Asas dan Geriatrik Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7301/1", name: "Landskap dan Nurseri Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7302/1", name: "Akuakultur dan Haiwan Rekreasi Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7303/1", name: "Tanaman Makanan Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7403/1", name: "Produksi Multimedia Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7405/1", name: "Produksi Reka Tanda Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7406/1", name: "Hiasan Dalaman Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "7407/1", name: "Reka Bentuk Grafik Digital Kertas 1", date: "2025-12-22", time: "14:30", endTime: "16:30", category: "Bertulis" },
+            { code: "6351/1", name: "Bahasa Cina Kertas 1", date: "2025-12-23", time: "08:15", endTime: "10:00", category: "Bertulis" },
+            { code: "6351/2", name: "Bahasa Cina Kertas 2", date: "2025-12-23", time: "14:30", endTime: "16:45", category: "Bertulis" },
+            { code: "6354/1", name: "Bahasa Tamil Kertas 1", date: "2025-12-23", time: "08:15", endTime: "10:00", category: "Bertulis" },
+            { code: "6354/2", name: "Bahasa Tamil Kertas 2", date: "2025-12-23", time: "14:30", endTime: "16:45", category: "Bertulis" },
+            { code: "6356/1", name: "Bahasa Iban Kertas 1", date: "2025-12-23", time: "08:15", endTime: "10:00", category: "Bertulis" },
+            { code: "6356/2", name: "Bahasa Iban Kertas 2", date: "2025-12-23", time: "14:30", endTime: "16:45", category: "Bertulis" },
+            { code: "6357/1", name: "Bahasa Kadazandusun Kertas 1", date: "2025-12-23", time: "08:15", endTime: "10:00", category: "Bertulis" },
+            { code: "6357/2", name: "Bahasa Kadazandusun Kertas 2", date: "2025-12-23", time: "14:30", endTime: "16:45", category: "Bertulis" },
+            { code: "6358", name: "Bahasa Semai", date: "2025-12-23", time: "08:15", endTime: "10:00", category: "Bertulis" },
+            { code: "2361/1", name: "Bahasa Arab Kertas 1", date: "2025-12-23", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "2361/2", name: "Bahasa Arab Kertas 2", date: "2025-12-23", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "5403/1", name: "Al-Lughah al-Arabiah al-Mu'asirah Kertas 1", date: "2025-12-23", time: "08:15", endTime: "10:45", category: "Bertulis" },
+            { code: "5305/1", name: "Turath Bahasa Arab Kertas 1", date: "2025-12-23", time: "14:30", endTime: "17:00", category: "Bertulis" },
+            { code: "5304/1", name: "Turath Dirasat Islamiah Kertas 1", date: "2025-12-02", time: "08:15", endTime: "10:45", category: "Bertulis" },
+        ];
+
+        let selectedSubjects = JSON.parse(localStorage.getItem('selectedSubjects')) || exams.map(e => e.code);
+        let timelineFilterSubject = 'all';
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        const subjectCategories = {
+            core: ['1103', '1119', '1249', '1449', '1511', '1223', '1225'],
+            science: ['4531', '4541', '4551', '4561', '4572', '3769'],
+            language: ['6351', '6354', '6356', '6357', '6358', '2361', '5403', '5305', '9378'],
+            islamic: ['5226', '5228', '5402', '5302', '5404', '5227', '5303', '5401', '5405', '5304', '9221'],
+            arts: ['2611', '2621', '2206', '2216', '9216', '9217'],
+            social: ['2280', '3766', '3767', '3756', '3754', '3768', '3729'],
+            technical: ['3472', '3770', '3759', '3771', '3760', '3761', '3762', '3763'],
+            vocational: ['7101', '7103', '7104', '7105', '7106', '7107', '7108', '7109', '7110', '7201', '7202', '7203', '7205', '7207', '7208', '7301', '7302', '7303', '7403', '7405', '7406', '7407']
+        };
+
+        function getSubjectCategory(code) {
+            const baseCode = code.split('/')[0];
+            for (const [category, codes] of Object.entries(subjectCategories)) {
+                if (codes.includes(baseCode)) return category;
+            }
+            return 'other';
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-tab').forEach(btn => {
+                btn.classList.remove('bg-indigo-500', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700');
+            });
+            document.getElementById('cat-' + category).classList.remove('bg-white', 'text-gray-700');
+            document.getElementById('cat-' + category).classList.add('bg-indigo-500', 'text-white');
+            renderSubjectSelection();
+        }
+
+        function searchSubjects() {
+            searchQuery = document.getElementById('searchSubject').value.toLowerCase();
+            renderSubjectSelection();
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+            const day = days[now.getDay()];
+            const date = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            const time = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('currentTime').textContent = `${day}, ${date} ${month} ${year}, ${time}`;
+        }
+
+        function getStatus(exam) {
+            const now = new Date();
+            const examDate = new Date(exam.date + 'T' + exam.time);
+            const endDate = exam.endDate ? new Date(exam.endDate + 'T23:59') : new Date(examDate.getTime() + 3 * 60 * 60 * 1000);
+            
+            if (now > endDate) return 'completed';
+            if (now >= examDate && now <= endDate) return 'inProgress';
+            return 'upcoming';
+        }
+
+        function renderSubjectSelection() {
+            const container = document.getElementById('subjectSelection');
+            const uniqueSubjects = [...new Map(exams.map(e => [e.code, e])).values()];
+            
+            let filteredSubjects = uniqueSubjects;
+            
+            // Filter by category
+            if (currentCategory !== 'all') {
+                filteredSubjects = filteredSubjects.filter(exam => getSubjectCategory(exam.code) === currentCategory);
+            }
+            
+            // Filter by search query
+            if (searchQuery) {
+                filteredSubjects = filteredSubjects.filter(exam => 
+                    exam.name.toLowerCase().includes(searchQuery) || 
+                    exam.code.toLowerCase().includes(searchQuery)
+                );
+            }
+            
+            if (filteredSubjects.length === 0) {
+                container.innerHTML = '<p class="text-gray-600 text-center py-4 col-span-full">Tiada mata pelajaran dijumpai.</p>';
+                return;
+            }
+            
+            container.innerHTML = filteredSubjects.map(exam => `
+                <label class="flex items-center gap-2 p-3 rounded-xl cursor-pointer transition-all glass-card ${selectedSubjects.includes(exam.code) ? 'ring-2 ring-indigo-500' : ''}">
+                    <input type="checkbox" 
+                           value="${exam.code}" 
+                           ${selectedSubjects.includes(exam.code) ? 'checked' : ''}
+                           onchange="toggleSubject('${exam.code}')"
+                           class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                    <span class="text-sm font-medium text-gray-700">${exam.name}</span>
+                </label>
+            `).join('');
+        }
+
+        function toggleSubject(code) {
+            if (selectedSubjects.includes(code)) {
+                selectedSubjects = selectedSubjects.filter(s => s !== code);
+            } else {
+                selectedSubjects.push(code);
+            }
+            localStorage.setItem('selectedSubjects', JSON.stringify(selectedSubjects));
+            updateFilterDropdown();
+            renderTimeline();
+            updateCounts();
+        }
+
+        function selectAll() {
+            selectedSubjects = exams.map(e => e.code);
+            localStorage.setItem('selectedSubjects', JSON.stringify(selectedSubjects));
+            renderSubjectSelection();
+            updateFilterDropdown();
+            renderTimeline();
+            updateCounts();
+        }
+
+        function unselectAll() {
+            selectedSubjects = [];
+            localStorage.setItem('selectedSubjects', JSON.stringify(selectedSubjects));
+            renderSubjectSelection();
+            updateFilterDropdown();
+            renderTimeline();
+            updateCounts();
+        }
+
+        function updateFilterDropdown() {
+            const dropdown = document.getElementById('timelineFilter');
+            const uniqueSubjects = [...new Map(exams.filter(e => selectedSubjects.includes(e.code)).map(e => [e.code, e])).values()];
+            
+            dropdown.innerHTML = '<option value="all">Semua Mata Pelajaran</option>' + 
+                uniqueSubjects.map(exam => `<option value="${exam.code}">${exam.name}</option>`).join('');
+            dropdown.value = timelineFilterSubject;
+        }
+
+        function filterTimeline() {
+            timelineFilterSubject = document.getElementById('timelineFilter').value;
+            renderTimeline();
+        }
+
+        function toggleCollapse() {
+            const content = document.getElementById('subjectContent');
+            const icon = document.getElementById('collapseIcon');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('examTimeline');
+            let filteredExams = exams.filter(e => selectedSubjects.includes(e.code));
+            
+            // Apply timeline filter if not "all"
+            if (timelineFilterSubject !== 'all') {
+                filteredExams = filteredExams.filter(e => e.code === timelineFilterSubject);
+            }
+            
+            if (filteredExams.length === 0) {
+                container.innerHTML = '<p class="text-gray-600 text-center py-8 font-medium">Tiada mata pelajaran dipilih. Sila pilih mata pelajaran di atas.</p>';
+                return;
+            }
+
+            const groupedByDate = filteredExams.reduce((acc, exam) => {
+                const date = exam.date;
+                if (!acc[date]) acc[date] = [];
+                acc[date].push(exam);
+                return acc;
+            }, {});
+
+            const days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+
+            container.innerHTML = Object.entries(groupedByDate).sort().map(([date, examsOnDate]) => {
+                const dateObj = new Date(date);
+                const dayName = days[dateObj.getDay()];
+                const formattedDate = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+                
+                return `
+                    <div class="border-l-4 border-indigo-400 pl-6 pb-6 relative">
+                        <div class="absolute -left-3 top-0 w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full border-4 border-white shadow-lg"></div>
+                        <div class="mb-3">
+                            <h3 class="text-lg font-bold text-gray-800">${dayName}</h3>
+                            <p class="text-sm text-gray-600">${formattedDate}</p>
+                        </div>
+                        <div class="space-y-2">
+                            ${examsOnDate.map(exam => {
+                                const status = getStatus(exam);
+                                const statusConfig = {
+                                    completed: { class: 'status-completed', text: 'text-green-700', badge: 'bg-green-500 text-white', icon: '✓', label: 'Selesai' },
+                                    inProgress: { class: 'status-progress', text: 'text-blue-700', badge: 'bg-blue-500 text-white', icon: '🕐', label: 'Sedang Berlangsung' },
+                                    upcoming: { class: 'status-upcoming', text: 'text-orange-700', badge: 'bg-orange-500 text-white', icon: '🔔', label: 'Akan Datang' }
+                                };
+                                const config = statusConfig[status];
+                                
+                                return `
+                                    <div class="p-4 rounded-2xl ${config.class} transition-all hover:scale-[1.02]">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <span class="text-lg">${config.icon}</span>
+                                                    <h4 class="font-semibold ${config.text}">${exam.name}</h4>
+                                                </div>
+                                                <p class="text-sm text-gray-600">Kod: ${exam.code}</p>
+                                                <p class="text-sm text-gray-600">Masa: ${exam.time} - ${exam.endTime}</p>
+                                            </div>
+                                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${config.badge} shadow-md">
+                                                ${config.label}
+                                            </span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateCounts() {
+            const filteredExams = exams.filter(e => selectedSubjects.includes(e.code));
+            const completed = filteredExams.filter(e => getStatus(e) === 'completed').length;
+            const inProgress = filteredExams.filter(e => getStatus(e) === 'inProgress').length;
+            const upcoming = filteredExams.filter(e => getStatus(e) === 'upcoming').length;
+            
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('inProgressCount').textContent = inProgress;
+            document.getElementById('upcomingCount').textContent = upcoming;
+        }
+
+        // Initialize
+        updateTime();
+        renderSubjectSelection();
+        updateFilterDropdown();
+        renderTimeline();
+        updateCounts();
+        setInterval(updateTime, 1000);
+        setInterval(() => {
+            renderTimeline();
+            updateCounts();
+        }, 60000);
+    </script>
+</body>
+</html>

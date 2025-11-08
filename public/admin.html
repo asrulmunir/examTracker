@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Exam Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-attachment: fixed; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white rounded-3xl shadow-2xl p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-3xl font-bold text-gray-800">Admin Panel</h1>
+                <a href="/" class="text-indigo-600 hover:text-indigo-800 font-semibold">← Back to Tracker</a>
+            </div>
+            
+            <div id="loginSection" class="max-w-md mx-auto mt-8">
+                <h2 class="text-xl font-bold mb-4">Login</h2>
+                <input type="password" id="password" placeholder="Admin Password" class="w-full px-4 py-2 border rounded-lg mb-4" onkeypress="if(event.key==='Enter') login()">
+                <button onclick="login()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Login</button>
+                <p class="text-sm text-gray-600 mt-4">Default password: changeme123</p>
+            </div>
+
+            <div id="adminSection" style="display:none;">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Configuration</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Title</label>
+                            <input type="text" id="configTitle" class="w-full px-4 py-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Description</label>
+                            <input type="text" id="configDesc" class="w-full px-4 py-2 border rounded-lg">
+                        </div>
+                        <button onclick="saveConfig()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Save Config</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold mb-4">Exams</h2>
+                    <div class="mb-4">
+                        <button onclick="addExam()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">+ Add Exam</button>
+                        <button onclick="saveExams()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 ml-2">Save All</button>
+                    </div>
+                    <div id="examsList" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let password = '';
+        let exams = [];
+        let config = {};
+
+        async function login() {
+            password = document.getElementById('password').value;
+            try {
+                const res = await fetch('/api/config', {
+                    headers: { 'Authorization': 'Bearer ' + password }
+                });
+                if (res.ok) {
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('adminSection').style.display = 'block';
+                    await loadData();
+                } else {
+                    alert('Invalid password');
+                }
+            } catch (error) {
+                alert('Login failed');
+            }
+        }
+
+        async function loadData() {
+            const [examsRes, configRes] = await Promise.all([
+                fetch('/api/exams'),
+                fetch('/api/config')
+            ]);
+            exams = await examsRes.json();
+            config = await configRes.json();
+            
+            document.getElementById('configTitle').value = config.title || '';
+            document.getElementById('configDesc').value = config.description || '';
+            renderExams();
+        }
+
+        function renderExams() {
+            const container = document.getElementById('examsList');
+            if (exams.length === 0) {
+                container.innerHTML = '<p class="text-gray-600 text-center py-4">No exams yet. Click "Add Exam" to create one.</p>';
+                return;
+            }
+            container.innerHTML = exams.map((exam, index) => `
+                <div class="border rounded-lg p-4 bg-gray-50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Code</label>
+                            <input type="text" value="${exam.code}" onchange="updateExam(${index}, 'code', this.value)" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Name</label>
+                            <input type="text" value="${exam.name}" onchange="updateExam(${index}, 'name', this.value)" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Date (YYYY-MM-DD)</label>
+                            <input type="date" value="${exam.date}" onchange="updateExam(${index}, 'date', this.value)" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Time (HH:MM)</label>
+                            <input type="time" value="${exam.time}" onchange="updateExam(${index}, 'time', this.value)" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">End Time (optional)</label>
+                            <input type="time" value="${exam.endTime || ''}" onchange="updateExam(${index}, 'endTime', this.value)" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Category</label>
+                            <input type="text" value="${exam.category}" onchange="updateExam(${index}, 'category', this.value)" class="w-full px-3 py-2 border rounded">
+                        </div>
+                    </div>
+                    <button onclick="deleteExam(${index})" class="mt-2 text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function addExam() {
+            exams.push({
+                code: '',
+                name: '',
+                date: new Date().toISOString().split('T')[0],
+                time: '08:00',
+                endTime: '',
+                category: 'General'
+            });
+            renderExams();
+        }
+
+        function updateExam(index, field, value) {
+            exams[index][field] = value;
+        }
+
+        function deleteExam(index) {
+            if (confirm('Delete this exam?')) {
+                exams.splice(index, 1);
+                renderExams();
+            }
+        }
+
+        async function saveConfig() {
+            config.title = document.getElementById('configTitle').value;
+            config.description = document.getElementById('configDesc').value;
+            
+            try {
+                const res = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + password
+                    },
+                    body: JSON.stringify(config)
+                });
+                if (res.ok) {
+                    alert('Config saved!');
+                } else {
+                    alert('Failed to save config');
+                }
+            } catch (error) {
+                alert('Error saving config');
+            }
+        }
+
+        async function saveExams() {
+            try {
+                const res = await fetch('/api/exams', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + password
+                    },
+                    body: JSON.stringify(exams)
+                });
+                if (res.ok) {
+                    alert('Exams saved!');
+                } else {
+                    alert('Failed to save exams');
+                }
+            } catch (error) {
+                alert('Error saving exams');
+            }
+        }
+    </script>
+</body>
+</html>

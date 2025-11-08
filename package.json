@@ -1,0 +1,16 @@
+{
+  "name": "exam-tracker",
+  "version": "1.0.0",
+  "description": "Beautiful exam progress tracker with admin panel",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "keywords": ["exam", "tracker", "cloudflare", "workers", "education"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^4.46.0"
+  }
+}

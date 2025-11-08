@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Exam Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta http-equiv="refresh" content="1800">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-attachment: fixed; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); }
+        .glass-dark { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.2); }
+        .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.25); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-card:hover { background: rgba(255, 255, 255, 0.75); transform: translateY(-2px); box-shadow: 0 16px 48px 0 rgba(31, 38, 135, 0.25); }
+        .glass-button { background: rgba(99, 102, 241, 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.2s ease; }
+        .glass-button:hover { background: rgba(79, 70, 229, 0.95); transform: scale(1.02); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); }
+        .status-completed { background: rgba(16, 185, 129, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .status-progress { background: rgba(59, 130, 246, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .status-upcoming { background: rgba(249, 115, 22, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(249, 115, 22, 0.3); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="glass-dark rounded-3xl p-6 mb-6">
+            <h1 id="mainTitle" class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Exam Tracker</h1>
+            <p id="mainDesc" class="text-gray-700 font-medium">Track your examination progress</p>
+            <div class="mt-4 flex items-center justify-between">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span id="currentTime"></span>
+                </div>
+                <a href="/admin" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold">Admin</a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Completed</p>
+                        <p class="text-3xl font-bold text-green-600" id="completedCount">0</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-400 to-green-600 p-3 rounded-2xl shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">In Progress</p>
+                        <p class="text-3xl font-bold text-blue-600" id="inProgressCount">0</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-3 rounded-2xl shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Upcoming</p>
+                        <p class="text-3xl font-bold text-orange-600" id="upcomingCount">0</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-3 rounded-2xl shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-dark rounded-3xl p-6 mb-6">
+            <div class="flex items-center justify-between mb-4 cursor-pointer" onclick="toggleCollapse()">
+                <h2 class="text-xl font-bold text-gray-800">Select Subjects</h2>
+                <svg id="collapseIcon" class="w-6 h-6 text-gray-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+            <div id="subjectContent" class="space-y-4">
+                <div class="flex flex-col md:flex-row gap-2">
+                    <button onclick="selectAll(); event.stopPropagation();" class="glass-button px-4 py-2 text-white text-sm font-semibold rounded-xl">Select All</button>
+                    <button onclick="unselectAll(); event.stopPropagation();" class="glass-button px-4 py-2 text-white text-sm font-semibold rounded-xl" style="background: rgba(107, 114, 128, 0.9);">Unselect All</button>
+                    <input type="text" id="searchSubject" placeholder="Search..." onkeyup="searchSubjects()" class="flex-1 px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" onclick="event.stopPropagation();">
+                </div>
+                <div id="subjectSelection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+            </div>
+        </div>
+
+        <div class="glass-dark rounded-3xl p-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+                <h2 class="text-xl font-bold text-gray-800">Exam Timeline</h2>
+                <select id="timelineFilter" onchange="filterTimeline()" class="glass-button px-4 py-2 text-white text-sm font-semibold rounded-xl cursor-pointer w-full md:w-auto">
+                    <option value="all">All Subjects</option>
+                </select>
+            </div>
+            <div id="examTimeline" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <script>
+        let exams = [];
+        let selectedSubjects = [];
+        let timelineFilterSubject = 'all';
+        let searchQuery = '';
+
+        async function loadData() {
+            try {
+                const [examsRes, configRes] = await Promise.all([
+                    fetch('/api/exams'),
+                    fetch('/api/config')
+                ]);
+                
+                exams = await examsRes.json();
+                const config = await configRes.json();
+                
+                document.getElementById('pageTitle').textContent = config.title;
+                document.getElementById('mainTitle').textContent = config.title;
+                document.getElementById('mainDesc').textContent = config.description;
+                
+                selectedSubjects = JSON.parse(localStorage.getItem('selectedSubjects')) || exams.map(e => e.code);
+                
+                renderSubjectSelection();
+                updateFilterDropdown();
+                renderTimeline();
+                updateCounts();
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                document.getElementById('examTimeline').innerHTML = '<p class="text-center text-gray-600">No exams configured. Please contact admin.</p>';
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleString('en-US', { 
+                dateStyle: 'full', 
+                timeStyle: 'short'
+            });
+        }
+
+        function getStatus(exam) {
+            const now = new Date();
+            const examDate = new Date(exam.date + 'T' + exam.time);
+            const endDate = exam.endDate ? new Date(exam.endDate + 'T23:59') : new Date(examDate.getTime() + 3 * 60 * 60 * 1000);
+            
+            if (now > endDate) return 'completed';
+            if (now >= examDate && now <= endDate) return 'inProgress';
+            return 'upcoming';
+        }
+
+        function renderSubjectSelection() {
+            const container = document.getElementById('subjectSelection');
+            const uniqueSubjects = [...new Map(exams.map(e => [e.code, e])).values()];
+            
+            let filteredSubjects = uniqueSubjects;
+            if (searchQuery) {
+                filteredSubjects = filteredSubjects.filter(exam => 
+                    exam.name.toLowerCase().includes(searchQuery) || 
+                    exam.code.toLowerCase().includes(searchQuery)
+                );
+            }
+            
+            if (filteredSubjects.length === 0) {
+                container.innerHTML = '<p class="text-gray-600 text-center py-4 col-span-full">No subjects found.</p>';
+                return;
+            }
+            
+            container.innerHTML = filteredSubjects.map(exam => `
+                <label class="flex items-center gap-2 p-3 rounded-xl cursor-pointer transition-all glass-card ${selectedSubjects.includes(exam.code) ? 'ring-2 ring-indigo-500' : ''}">
+                    <input type="checkbox" 
+                           value="${exam.code}" 
+                           ${selectedSubjects.includes(exam.code) ? 'checked' : ''}
+                           onchange="toggleSubject('${exam.code}')"
+                           class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                    <span class="text-sm font-medium text-gray-700">${exam.name}</span>
+                </label>
+            `).join('');
+        }
+
+        function toggleSubject(code) {
+            if (selectedSubjects.includes(code)) {
+                selectedSubjects = selectedSubjects.filter(s => s !== code);
+            } else {
+                selectedSubjects.push(code);
+            }
+            localStorage.setItem('selectedSubjects', JSON.stringify(selectedSubjects));
+            updateFilterDropdown();
+            renderTimeline();
+            updateCounts();
+        }
+
+        function selectAll() {
+            selectedSubjects = exams.map(e => e.code);
+            localStorage.setItem('selectedSubjects', JSON.stringify(selectedSubjects));
+            renderSubjectSelection();
+            updateFilterDropdown();
+            renderTimeline();
+            updateCounts();
+        }
+
+        function unselectAll() {
+            selectedSubjects = [];
+            localStorage.setItem('selectedSubjects', JSON.stringify(selectedSubjects));
+            renderSubjectSelection();
+            updateFilterDropdown();
+            renderTimeline();
+            updateCounts();
+        }
+
+        function searchSubjects() {
+            searchQuery = document.getElementById('searchSubject').value.toLowerCase();
+            renderSubjectSelection();
+        }
+
+        function updateFilterDropdown() {
+            const dropdown = document.getElementById('timelineFilter');
+            const uniqueSubjects = [...new Map(exams.filter(e => selectedSubjects.includes(e.code)).map(e => [e.code, e])).values()];
+            
+            dropdown.innerHTML = '<option value="all">All Subjects</option>' + 
+                uniqueSubjects.map(exam => `<option value="${exam.code}">${exam.name}</option>`).join('');
+            dropdown.value = timelineFilterSubject;
+        }
+
+        function filterTimeline() {
+            timelineFilterSubject = document.getElementById('timelineFilter').value;
+            renderTimeline();
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('examTimeline');
+            let filteredExams = exams.filter(e => selectedSubjects.includes(e.code));
+            
+            if (timelineFilterSubject !== 'all') {
+                filteredExams = filteredExams.filter(e => e.code === timelineFilterSubject);
+            }
+            
+            if (filteredExams.length === 0) {
+                container.innerHTML = '<p class="text-gray-600 text-center py-8 font-medium">No subjects selected.</p>';
+                return;
+            }
+
+            const groupedByDate = filteredExams.reduce((acc, exam) => {
+                const date = exam.date;
+                if (!acc[date]) acc[date] = [];
+                acc[date].push(exam);
+                return acc;
+            }, {});
+
+            container.innerHTML = Object.entries(groupedByDate).sort().map(([date, examsOnDate]) => {
+                const dateObj = new Date(date);
+                const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                
+                return `
+                    <div class="border-l-4 border-indigo-400 pl-6 pb-6 relative">
+                        <div class="absolute -left-3 top-0 w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full border-4 border-white shadow-lg"></div>
+                        <div class="mb-3">
+                            <h3 class="text-lg font-bold text-gray-800">${formattedDate}</h3>
+                        </div>
+                        <div class="space-y-2">
+                            ${examsOnDate.map(exam => {
+                                const status = getStatus(exam);
+                                const statusConfig = {
+                                    completed: { class: 'status-completed', text: 'text-green-700', badge: 'bg-green-500 text-white', icon: '✓', label: 'Completed' },
+                                    inProgress: { class: 'status-progress', text: 'text-blue-700', badge: 'bg-blue-500 text-white', icon: '🕐', label: 'In Progress' },
+                                    upcoming: { class: 'status-upcoming', text: 'text-orange-700', badge: 'bg-orange-500 text-white', icon: '🔔', label: 'Upcoming' }
+                                };
+                                const config = statusConfig[status];
+                                
+                                return `
+                                    <div class="p-4 rounded-2xl ${config.class} transition-all hover:scale-[1.02]">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <span class="text-lg">${config.icon}</span>
+                                                    <h4 class="font-semibold ${config.text}">${exam.name}</h4>
+                                                </div>
+                                                <p class="text-sm text-gray-600">Code: ${exam.code}</p>
+                                                <p class="text-sm text-gray-600">Time: ${exam.time}${exam.endTime ? ' - ' + exam.endTime : ''}</p>
+                                            </div>
+                                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${config.badge} shadow-md">
+                                                ${config.label}
+                                            </span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateCounts() {
+            const filteredExams = exams.filter(e => selectedSubjects.includes(e.code));
+            const completed = filteredExams.filter(e => getStatus(e) === 'completed').length;
+            const inProgress = filteredExams.filter(e => getStatus(e) === 'inProgress').length;
+            const upcoming = filteredExams.filter(e => getStatus(e) === 'upcoming').length;
+            
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('inProgressCount').textContent = inProgress;
+            document.getElementById('upcomingCount').textContent = upcoming;
+        }
+
+        function toggleCollapse() {
+            const content = document.getElementById('subjectContent');
+            const icon = document.getElementById('collapseIcon');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        updateTime();
+        loadData();
+        setInterval(updateTime, 1000);
+        setInterval(() => {
+            renderTimeline();
+            updateCounts();
+        }, 60000);
+    </script>
+</body>
+</html>
