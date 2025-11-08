@@ -28,6 +28,20 @@ export default {
       });
     }
 
+    // API: Check auth
+    if (url.pathname === '/api/auth' && request.method === 'POST') {
+      const auth = request.headers.get('Authorization');
+      if (checkAuth(auth, env.ADMIN_PASSWORD)) {
+        return new Response(JSON.stringify({ valid: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      return new Response(JSON.stringify({ valid: false }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     // API: Get exams
     if (url.pathname === '/api/exams' && request.method === 'GET') {
       const exams = await env.EXAM_DATA.get('exams', 'json') || [];
@@ -61,7 +75,7 @@ export default {
       });
     }
 
-    // API: Save config
+    // API: Save config (requires auth)
     if (url.pathname === '/api/config' && request.method === 'POST') {
       const auth = request.headers.get('Authorization');
       if (!checkAuth(auth, env.ADMIN_PASSWORD)) {
