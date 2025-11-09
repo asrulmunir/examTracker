@@ -2,15 +2,10 @@ name = "exam-tracker"
 main = "src/index.js"
 compatibility_date = "2025-11-08"
 
-[build]
-command = ""
-
-[build.upload]
-format = "modules"
-
 [[rules]]
 type = "Text"
 globs = ["**/*.html"]
+fallthrough = true
 
 [[kv_namespaces]]
 binding = "EXAM_DATA"
