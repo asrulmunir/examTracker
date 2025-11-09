@@ -265,6 +265,13 @@
                 return acc;
             }, {});
 
+            // Sort exams within each date by time
+            Object.keys(groupedByDate).forEach(date => {
+                groupedByDate[date].sort((a, b) => {
+                    return a.time.localeCompare(b.time);
+                });
+            });
+
             container.innerHTML = Object.entries(groupedByDate).sort().map(([date, examsOnDate]) => {
                 const dateObj = new Date(date);
                 const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
