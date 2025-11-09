@@ -11,17 +11,30 @@ Deploy your own Exam Tracker in **5 minutes**!
 
 ```bash
 # Clone or download this repository
-git clone <your-repo-url>
+git clone https://github.com/asrulmunir/examTracker.git
 cd examTracker
 ```
 
-## Step 2: Install Dependencies
+## Step 2: Customize Worker Name (Optional)
+
+Want to deploy multiple trackers? Edit `wrangler.toml`:
+
+```toml
+name = "exam-tracker"  # Change this to anything you want!
+```
+
+**Examples:**
+- `spm-2025` → `https://spm-2025.YOUR-USERNAME.workers.dev`
+- `finals-tracker` → `https://finals-tracker.YOUR-USERNAME.workers.dev`
+- `midterms` → `https://midterms.YOUR-USERNAME.workers.dev`
+
+## Step 3: Install Dependencies
 
 ```bash
 npm install
 ```
 
-## Step 3: Login to Cloudflare
+## Step 4: Login to Cloudflare
 
 ```bash
 npx wrangler login
@@ -29,7 +42,7 @@ npx wrangler login
 
 This will open your browser to authenticate.
 
-## Step 4: Create KV Namespace
+## Step 5: Create KV Namespace
 
 ```bash
 npx wrangler kv namespace create "EXAM_DATA"
@@ -43,7 +56,7 @@ binding = "EXAM_DATA"
 id = "paste-your-id-here"  # Replace this!
 ```
 
-## Step 5: Set Your Admin Password
+## Step 6: Set Your Admin Password
 
 Edit `wrangler.toml`:
 
@@ -52,7 +65,7 @@ Edit `wrangler.toml`:
 ADMIN_PASSWORD = "your-secure-password"  # Change this!
 ```
 
-## Step 6: Deploy!
+## Step 7: Deploy!
 
 ```bash
 npx wrangler deploy
@@ -60,7 +73,7 @@ npx wrangler deploy
 
 That's it! 🎉
 
-Your tracker will be live at: `https://exam-tracker.YOUR-USERNAME.workers.dev`
+Your tracker will be live at: `https://YOUR-WORKER-NAME.YOUR-USERNAME.workers.dev`
 
 ## First Time Setup
 

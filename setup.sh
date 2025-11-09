@@ -4,6 +4,22 @@ echo "🚀 Exam Tracker Setup"
 echo "====================="
 echo ""
 
+# Ask for worker name
+echo "📝 Customize your deployment"
+read -p "Enter worker name (press Enter for 'exam-tracker'): " WORKER_NAME
+echo ""
+
+if [ -z "$WORKER_NAME" ]; then
+    WORKER_NAME="exam-tracker"
+fi
+
+# Update wrangler.toml with worker name
+sed -i.bak "s/name = \".*\"/name = \"$WORKER_NAME\"/" wrangler.toml
+rm wrangler.toml.bak 2>/dev/null || true
+
+echo "✅ Worker name set to: $WORKER_NAME"
+echo ""
+
 # Check if wrangler is installed
 if ! command -v wrangler &> /dev/null; then
     echo "📦 Installing Wrangler..."
@@ -56,10 +72,9 @@ npx wrangler deploy
 echo ""
 echo "✅ Setup complete!"
 echo ""
-echo "📝 Next steps:"
-echo "1. Visit your Workers URL (shown above)"
-echo "2. Go to /admin"
-echo "3. Login with password: $ADMIN_PASSWORD"
-echo "4. Add your exams!"
+echo "📝 Your deployment:"
+echo "   URL: https://$WORKER_NAME.YOUR-USERNAME.workers.dev"
+echo "   Admin: /admin"
+echo "   Password: $ADMIN_PASSWORD"
 echo ""
 echo "🎉 Happy tracking!"

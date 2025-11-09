@@ -3,6 +3,10 @@ name: Deploy to Cloudflare Workers
 on:
   workflow_dispatch:
     inputs:
+      worker_name:
+        description: 'Worker Name (e.g., spm-2025, finals-tracker)'
+        required: true
+        default: 'exam-tracker'
       admin_password:
         description: 'Admin Password'
         required: true
@@ -39,6 +43,7 @@ jobs:
       
       - name: Update wrangler.toml
         run: |
+          sed -i 's/name = ".*"/name = "${{ github.event.inputs.worker_name }}"/' wrangler.toml
           sed -i 's/id = ".*"/id = "${{ steps.kv.outputs.kv_id }}"/' wrangler.toml
           sed -i 's/ADMIN_PASSWORD = ".*"/ADMIN_PASSWORD = "${{ github.event.inputs.admin_password }}"/' wrangler.toml
       
@@ -50,6 +55,6 @@ jobs:
       - name: Deployment Info
         run: |
           echo "✅ Deployment successful!"
-          echo "🌐 Your tracker is live at: https://exam-tracker.YOUR-USERNAME.workers.dev"
-          echo "🔐 Admin panel: https://exam-tracker.YOUR-USERNAME.workers.dev/admin"
+          echo "🌐 Your tracker is live at: https://${{ github.event.inputs.worker_name }}.YOUR-USERNAME.workers.dev"
+          echo "🔐 Admin panel: https://${{ github.event.inputs.worker_name }}.YOUR-USERNAME.workers.dev/admin"
           echo "🔑 Password: ${{ github.event.inputs.admin_password }}"

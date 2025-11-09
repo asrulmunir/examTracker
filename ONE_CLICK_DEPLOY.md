@@ -28,10 +28,18 @@ Click the "Fork" button at the top right of this page.
 1. Go to **Actions** tab in your repo
 2. Click **Deploy to Cloudflare Workers**
 3. Click **Run workflow**
-4. Enter your desired admin password
-5. Click **Run workflow**
+4. Enter your **worker name** (e.g., `spm-2025`, `finals-tracker`)
+5. Enter your desired **admin password**
+6. Click **Run workflow**
 
 Wait ~1 minute and you're done! 🎉
+
+**Multiple Deployments:**
+Want to track different exams? Just run the workflow again with a different worker name:
+- `spm-2025` for SPM exams
+- `stpm-2025` for STPM exams  
+- `finals-2025` for university finals
+- Each gets its own URL and data!
 
 ## Step 5: Find Your URL
 

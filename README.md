@@ -50,6 +50,30 @@ See [DEPLOY.md](DEPLOY.md) for step-by-step CLI instructions.
 **Admin Panel:** https://exam-tracker.asrulmunir.workers.dev/admin
 (Password: changeme123)
 
+## Multiple Deployments
+
+Want to track different exams? Deploy multiple instances with different names:
+
+```bash
+# Deploy for SPM
+name = "spm-2025" in wrangler.toml
+→ https://spm-2025.YOUR-USERNAME.workers.dev
+
+# Deploy for STPM  
+name = "stpm-2025" in wrangler.toml
+→ https://stpm-2025.YOUR-USERNAME.workers.dev
+
+# Deploy for Finals
+name = "finals-tracker" in wrangler.toml
+→ https://finals-tracker.YOUR-USERNAME.workers.dev
+```
+
+Each deployment has its own:
+- ✅ Unique URL
+- ✅ Separate data storage
+- ✅ Independent admin panel
+- ✅ Own password
+
 ## Usage
 
 ### Public View
