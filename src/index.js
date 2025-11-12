@@ -1,5 +1,6 @@
 import indexHTML from '../public/index.html';
 import adminHTML from '../public/admin.html';
+import translations from './translations.js';
 
 export default {
   async fetch(request, env) {
@@ -68,7 +69,8 @@ export default {
     if (url.pathname === '/api/config' && request.method === 'GET') {
       const config = await env.EXAM_DATA.get('config', 'json') || {
         title: 'Exam Tracker',
-        description: 'Track your examination progress'
+        description: 'Track your examination progress',
+        language: 'en'
       };
       return new Response(JSON.stringify(config), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -85,6 +87,15 @@ export default {
       const config = await request.json();
       await env.EXAM_DATA.put('config', JSON.stringify(config));
       return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // API: Get translations
+    if (url.pathname === '/api/translations' && request.method === 'GET') {
+      const lang = url.searchParams.get('lang') || 'en';
+      const langTranslations = translations[lang] || translations.en;
+      return new Response(JSON.stringify(langTranslations), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }

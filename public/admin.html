@@ -9,44 +9,235 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
         body { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-attachment: fixed; }
+
+        /* Modal animations */
+        .modal-enter { animation: modalFadeIn 0.2s ease-out; }
+        .modal-leave { animation: modalFadeOut 0.2s ease-in; }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes modalFadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+
+        /* Custom scrollbar for modals */
+        .modal-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        .modal-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        .modal-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
         <div class="bg-white rounded-3xl shadow-2xl p-6 mb-6">
             <div class="flex items-center justify-between mb-4">
-                <h1 class="text-3xl font-bold text-gray-800">Admin Panel</h1>
-                <a href="/" class="text-indigo-600 hover:text-indigo-800 font-semibold">← Back to Tracker</a>
+                <h1 class="text-3xl font-bold text-gray-800" data-translate="adminPanel">Admin Panel</h1>
+                <a href="/" class="text-indigo-600 hover:text-indigo-800 font-semibold" data-translate="backToTracker">← Back to Tracker</a>
             </div>
             
             <div id="loginSection" class="max-w-md mx-auto mt-8">
-                <h2 class="text-xl font-bold mb-4">Login</h2>
-                <input type="password" id="password" placeholder="Admin Password" class="w-full px-4 py-2 border rounded-lg mb-4" onkeypress="if(event.key==='Enter') login()">
-                <button onclick="login()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Login</button>
-                <p class="text-sm text-gray-600 mt-4">Default password: changeme123</p>
+                <h2 class="text-xl font-bold mb-4" data-translate="login">Login</h2>
+                <input type="password" id="password" data-translate-placeholder="adminPassword" placeholder="Admin Password" class="w-full px-4 py-2 border rounded-lg mb-4" onkeypress="if(event.key==='Enter') login()">
+                <button onclick="login()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700" data-translate="loginButton">Login</button>
+                <p class="text-sm text-gray-600 mt-4" data-translate="defaultPassword">Default password: changeme123</p>
             </div>
 
             <div id="adminSection" style="display:none;">
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold mb-4">Configuration</h2>
+                    <h2 class="text-2xl font-bold mb-4" data-translate="configuration">Configuration</h2>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium mb-2">Title</label>
+                            <label class="block text-sm font-medium mb-2" data-translate="title">Title</label>
                             <input type="text" id="configTitle" class="w-full px-4 py-2 border rounded-lg">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-2">Description</label>
+                            <label class="block text-sm font-medium mb-2" data-translate="description">Description</label>
                             <input type="text" id="configDesc" class="w-full px-4 py-2 border rounded-lg">
                         </div>
-                        <button onclick="saveConfig()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Save Config</button>
+                        <div>
+                            <label class="block text-sm font-medium mb-2" data-translate="language">Language</label>
+                            <select id="configLanguage" class="w-full px-4 py-2 border rounded-lg">
+                                <option value="en" data-translate="english">English</option>
+                                <option value="ms" data-translate="malay">Bahasa Melayu</option>
+                            </select>
+                        </div>
+                        <button onclick="saveConfig()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700" data-translate="saveConfig">Save Config</button>
                     </div>
-                </div>
 
+                    <!-- Exam Modal -->
+                    <div id="examModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-scrollbar">
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-xl font-bold text-gray-800" id="modalTitle" data-translate="addNewExam">Add New Exam</h3>
+                                    <button onclick="hideExamModal()" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <form id="examForm" class="space-y-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <span data-translate="examCode">Code</span>
+                                                <span class="text-red-500">*</span>
+                                            </label>
+                                            <div class="flex items-center gap-2">
+                                                <input type="text" id="examCode" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., MATH101">
+                                                <button type="button" onclick="showFieldHelp('code')" class="text-gray-400 hover:text-gray-600 p-1" title="Help">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1" data-translate="required">Required - Unique identifier for the exam</p>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <span data-translate="examName">Name</span>
+                                                <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" id="examName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Mathematics Paper 1">
+                                            <p class="text-xs text-gray-500 mt-1" data-translate="required">Required</p>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <span data-translate="date">Date</span>
+                                                <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="date" id="examDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <p class="text-xs text-gray-500 mt-1" data-translate="required">Required</p>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <span data-translate="time">Time</span>
+                                                <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="time" id="examTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <p class="text-xs text-gray-500 mt-1" data-translate="required">Required</p>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <span data-translate="endTime">End Time</span>
+                                                <span class="text-gray-500">(<span data-translate="optional">optional</span>)</span>
+                                            </label>
+                                            <input type="time" id="examEndTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <p class="text-xs text-gray-500 mt-1" data-translate="optional">Optional</p>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <span data-translate="category">Category</span>
+                                                <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" id="examCategory" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Mathematics, Science, Core">
+                                            <p class="text-xs text-gray-500 mt-1" data-translate="required">Required - e.g., Mathematics, Science, Core</p>
+                                        </div>
+
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <span data-translate="location">Location</span>
+                                                <span class="text-gray-500">(<span data-translate="optional">optional</span>)</span>
+                                            </label>
+                                            <div class="flex items-center gap-2">
+                                                <input type="text" id="examLocation" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Hall A, Room 101">
+                                                <button type="button" onclick="showFieldHelp('location')" class="text-gray-400 hover:text-gray-600 p-1" title="Help">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1" data-translate="optional">Optional - e.g., Hall A, Room 101, Online</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-end gap-3 pt-4 border-t">
+                                        <button type="button" onclick="hideExamModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50" data-translate="cancel">Cancel</button>
+                                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold" id="modalSubmitBtn" data-translate="createExam">Create Exam</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Import Modal -->
+                    <div id="bulkImportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-scrollbar">
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-xl font-bold text-gray-800" data-translate="bulkImport">Bulk Import</h3>
+                                    <button onclick="hideBulkImportModal()" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2" data-translate="pasteJsonHere">Paste JSON data here</label>
+                                        <textarea id="bulkImportData" rows="10" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm" placeholder='[{"code": "MATH101", "name": "Mathematics Paper 1", "date": "2025-01-15", "time": "09:00", "category": "Mathematics"}]'></textarea>
+                                    </div>
+
+                                    <div class="flex justify-end gap-3">
+                                        <button onclick="hideBulkImportModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50" data-translate="cancel">Cancel</button>
+                                        <button onclick="processBulkImport()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold" data-translate="importFromJson">Import from JSON</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
                 <div>
-                    <h2 class="text-2xl font-bold mb-4">Exams</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold" data-translate="exams">Exams</h2>
+                        <div class="flex gap-2">
+                            <div class="relative">
+                                <button onclick="toggleQuickAddMenu()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2" data-translate="quickAdd">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    Quick Add
+                                </button>
+                                <div id="quickAddMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border hidden z-10">
+                                    <button onclick="quickAddExam('today')" class="block w-full text-left px-4 py-2 hover:bg-gray-100 first:rounded-t-lg" data-translate="addToday">Add Today</button>
+                                    <button onclick="quickAddExam('tomorrow')" class="block w-full text-left px-4 py-2 hover:bg-gray-100" data-translate="addTomorrow">Add Tomorrow</button>
+                                    <button onclick="quickAddExam('week')" class="block w-full text-left px-4 py-2 hover:bg-gray-100 last:rounded-b-lg" data-translate="addThisWeek">Add This Week</button>
+                                </div>
+                            </div>
+                            <button onclick="showBulkImport()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700" data-translate="bulkImport">Bulk Import</button>
+                            <button onclick="exportToJson()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700" data-translate="exportToJson">Export JSON</button>
+                        </div>
+                    </div>
                     <div class="mb-4">
-                        <button onclick="addExam()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">+ Add Exam</button>
-                        <button onclick="saveExams()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 ml-2">Save All</button>
+                        <button onclick="showExamModal()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-semibold flex items-center gap-2" data-translate="addNewExam">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Add New Exam
+                        </button>
+                        <button onclick="saveExams()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 ml-3 font-semibold" data-translate="saveAll">Save All</button>
                     </div>
                     <div id="examsList" class="space-y-4"></div>
                 </div>
@@ -58,6 +249,8 @@
         let password = '';
         let exams = [];
         let config = {};
+        let translations = {};
+        let editingExamIndex = -1;
 
         async function login() {
             password = document.getElementById('password').value;
@@ -79,6 +272,11 @@
             }
         }
 
+        async function loadTranslations(lang = 'en') {
+            const res = await fetch(`/api/translations?lang=${lang}`);
+            translations = await res.json();
+        }
+
         async function loadData() {
             const [examsRes, configRes] = await Promise.all([
                 fetch('/api/exams'),
@@ -86,74 +284,363 @@
             ]);
             exams = await examsRes.json();
             config = await configRes.json();
-            
+
+            // Load translations for the current language
+            await loadTranslations(config.language || 'en');
+
             document.getElementById('configTitle').value = config.title || '';
             document.getElementById('configDesc').value = config.description || '';
+            document.getElementById('configLanguage').value = config.language || 'en';
+
+            updateAdminUIWithTranslations();
             renderExams();
+        }
+
+        function updateAdminUIWithTranslations() {
+            // Update elements with data-translate attributes
+            const translateElements = document.querySelectorAll('[data-translate]');
+            translateElements.forEach(element => {
+                const key = element.dataset.translate;
+                if (translations[key]) {
+                    element.textContent = translations[key];
+                }
+            });
+
+            // Update placeholders
+            const placeholderElements = document.querySelectorAll('[data-translate-placeholder]');
+            placeholderElements.forEach(element => {
+                const key = element.dataset.translatePlaceholder;
+                if (translations[key]) {
+                    element.placeholder = translations[key];
+                }
+            });
+        }
+
+        // Modal functions
+        function showExamModal(index = -1) {
+            editingExamIndex = index;
+            const modal = document.getElementById('examModal');
+            const form = document.getElementById('examForm');
+            const title = document.getElementById('modalTitle');
+            const submitBtn = document.getElementById('modalSubmitBtn');
+
+            if (index >= 0) {
+                // Editing existing exam
+                const exam = exams[index];
+                document.getElementById('examCode').value = exam.code || '';
+                document.getElementById('examName').value = exam.name || '';
+                document.getElementById('examDate').value = exam.date || '';
+                document.getElementById('examTime').value = exam.time || '';
+                document.getElementById('examEndTime').value = exam.endTime || '';
+                document.getElementById('examCategory').value = exam.category || '';
+                document.getElementById('examLocation').value = exam.location || '';
+                title.textContent = translations.editExam || 'Edit Exam';
+                submitBtn.textContent = translations.updateExam || 'Update Exam';
+            } else {
+                // Adding new exam
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+                document.getElementById('examCode').value = '';
+                document.getElementById('examName').value = '';
+                document.getElementById('examDate').value = tomorrowStr;
+                document.getElementById('examTime').value = '09:00';
+                document.getElementById('examEndTime').value = '';
+                document.getElementById('examCategory').value = '';
+                document.getElementById('examLocation').value = '';
+                title.textContent = translations.addNewExam || 'Add New Exam';
+                submitBtn.textContent = translations.createExam || 'Create Exam';
+            }
+
+            modal.classList.remove('hidden');
+            document.getElementById('examCode').focus();
+        }
+
+        function hideExamModal() {
+            document.getElementById('examModal').classList.add('hidden');
+            editingExamIndex = -1;
+        }
+
+        function showBulkImport() {
+            document.getElementById('bulkImportModal').classList.remove('hidden');
+        }
+
+        function hideBulkImportModal() {
+            document.getElementById('bulkImportModal').classList.add('hidden');
+        }
+
+        function toggleQuickAddMenu() {
+            const menu = document.getElementById('quickAddMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Form validation
+        function validateExamForm() {
+            const code = document.getElementById('examCode').value.trim();
+            const name = document.getElementById('examName').value.trim();
+            const date = document.getElementById('examDate').value;
+            const time = document.getElementById('examTime').value;
+            const category = document.getElementById('examCategory').value;
+
+            if (!code) {
+                alert(translations.examCodeRequired || 'Exam code is required');
+                document.getElementById('examCode').focus();
+                return false;
+            }
+
+            if (!name) {
+                alert(translations.examNameRequired || 'Exam name is required');
+                document.getElementById('examName').focus();
+                return false;
+            }
+
+            if (!date) {
+                alert(translations.dateRequired || 'Date is required');
+                document.getElementById('examDate').focus();
+                return false;
+            }
+
+            if (!time) {
+                alert(translations.timeRequired || 'Time is required');
+                document.getElementById('examTime').focus();
+                return false;
+            }
+
+            if (!category) {
+                alert(translations.categoryRequired || 'Category is required');
+                document.getElementById('examCategory').focus();
+                return false;
+            }
+
+            // Check for duplicate codes (except when editing the same exam)
+            const duplicate = exams.find((exam, index) =>
+                exam.code === code && index !== editingExamIndex
+            );
+            if (duplicate) {
+                alert(translations.duplicateCode || 'Exam code already exists');
+                document.getElementById('examCode').focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        // Form submission
+        document.getElementById('examForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!validateExamForm()) {
+                return;
+            }
+
+            const examData = {
+                code: document.getElementById('examCode').value.trim(),
+                name: document.getElementById('examName').value.trim(),
+                date: document.getElementById('examDate').value,
+                time: document.getElementById('examTime').value,
+                endTime: document.getElementById('examEndTime').value || '',
+                category: document.getElementById('examCategory').value,
+                location: document.getElementById('examLocation').value.trim() || ''
+            };
+
+            if (editingExamIndex >= 0) {
+                // Update existing exam
+                exams[editingExamIndex] = examData;
+            } else {
+                // Add new exam
+                exams.push(examData);
+            }
+
+            renderExams();
+            hideExamModal();
+        });
+
+        // Quick add functions
+        function quickAddExam(type) {
+            const today = new Date();
+            let targetDate;
+
+            switch (type) {
+                case 'today':
+                    targetDate = new Date(today);
+                    break;
+                case 'tomorrow':
+                    targetDate = new Date(today);
+                    targetDate.setDate(today.getDate() + 1);
+                    break;
+                case 'week':
+                    targetDate = new Date(today);
+                    targetDate.setDate(today.getDate() + 7);
+                    break;
+            }
+
+            const dateStr = targetDate.toISOString().split('T')[0];
+            const examData = {
+                code: `EXAM${Date.now().toString().slice(-4)}`,
+                name: `${translations.addNewExam || 'New Exam'} - ${targetDate.toLocaleDateString()}`,
+                date: dateStr,
+                time: '09:00',
+                endTime: '',
+                category: 'General',
+                location: ''
+            };
+
+            exams.push(examData);
+            renderExams();
+            toggleQuickAddMenu();
+        }
+
+        // Bulk import
+        function processBulkImport() {
+            const jsonData = document.getElementById('bulkImportData').value.trim();
+
+            if (!jsonData) {
+                alert(translations.importError || 'Please enter JSON data');
+                return;
+            }
+
+            try {
+                const importedExams = JSON.parse(jsonData);
+
+                if (!Array.isArray(importedExams)) {
+                    throw new Error('Data must be an array of exams');
+                }
+
+                // Validate each exam
+                for (const exam of importedExams) {
+                    if (!exam.code || !exam.name || !exam.date || !exam.time || !exam.category) {
+                        throw new Error('Each exam must have code, name, date, time, and category');
+                    }
+                }
+
+                // Add imported exams
+                exams.push(...importedExams);
+                renderExams();
+                hideBulkImportModal();
+
+                const message = (translations.importSuccess || 'Successfully imported {count} exams').replace('{count}', importedExams.length);
+                alert(message);
+
+            } catch (error) {
+                alert(`${translations.importError || 'Import failed'}: ${error.message}`);
+            }
+        }
+
+        // Export to JSON
+        function exportToJson() {
+            const dataStr = JSON.stringify(exams, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'exams.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Field help
+        function showFieldHelp(field) {
+            const helpTexts = {
+                code: {
+                    en: "A unique identifier for the exam (e.g., MATH101, ENG202). This code will be displayed on the main tracker.",
+                    ms: "Pengenal pasti unik untuk peperiksaan (contoh: MATH101, ENG202). Kod ini akan dipaparkan pada penjejak utama."
+                },
+                location: {
+                    en: "Where the exam will take place. This could be a physical location like 'Hall A, Room 101' or virtual like 'Online via Zoom'.",
+                    ms: "Di mana peperiksaan akan diadakan. Ini boleh jadi lokasi fizikal seperti 'Dewan A, Bilik 101' atau maya seperti 'Atas talian melalui Zoom'."
+                }
+            };
+
+            const currentLang = config.language || 'en';
+            const helpText = helpTexts[field]?.[currentLang] || helpTexts[field]?.en || 'Help text not available.';
+
+            alert(helpText);
         }
 
         function renderExams() {
             const container = document.getElementById('examsList');
             if (exams.length === 0) {
-                container.innerHTML = '<p class="text-gray-600 text-center py-4">No exams yet. Click "Add Exam" to create one.</p>';
+                container.innerHTML = `<div class="text-center py-12">
+                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p class="text-gray-500 text-lg mb-4">${translations.noExamsToEdit || 'No exams to edit. Add some exams first.'}</p>
+                    <button onclick="showExamModal()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-semibold inline-flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        ${translations.addNewExam || 'Add New Exam'}
+                    </button>
+                </div>`;
                 return;
             }
-            container.innerHTML = exams.map((exam, index) => `
-                <div class="border rounded-lg p-4 bg-gray-50">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Code</label>
-                            <input type="text" value="${exam.code}" onchange="updateExam(${index}, 'code', this.value)" class="w-full px-3 py-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Name</label>
-                            <input type="text" value="${exam.name}" onchange="updateExam(${index}, 'name', this.value)" class="w-full px-3 py-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Date (YYYY-MM-DD)</label>
-                            <input type="date" value="${exam.date}" onchange="updateExam(${index}, 'date', this.value)" class="w-full px-3 py-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Time (HH:MM)</label>
-                            <input type="time" value="${exam.time}" onchange="updateExam(${index}, 'time', this.value)" class="w-full px-3 py-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">End Time (optional)</label>
-                            <input type="time" value="${exam.endTime || ''}" onchange="updateExam(${index}, 'endTime', this.value)" class="w-full px-3 py-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Category</label>
-                            <input type="text" value="${exam.category}" onchange="updateExam(${index}, 'category', this.value)" class="w-full px-3 py-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Location (optional)</label>
-                            <input type="text" value="${exam.location || ''}" onchange="updateExam(${index}, 'location', this.value)" class="w-full px-3 py-2 border rounded" placeholder="e.g., Hall A, Room 101">
+
+            container.innerHTML = exams.map((exam, index) => {
+                return `
+                    <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h3 class="text-lg font-semibold text-gray-800">${exam.name}</h3>
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        ${exam.category}
+                                    </span>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                                    <div>
+                                        <span class="font-medium">${translations.examCode || 'Code'}:</span> ${exam.code}
+                                    </div>
+                                    <div>
+                                        <span class="font-medium">${translations.date || 'Date'}:</span> ${new Date(exam.date).toLocaleDateString()}
+                                    </div>
+                                    <div>
+                                        <span class="font-medium">${translations.time || 'Time'}:</span> ${exam.time}${exam.endTime ? ' - ' + exam.endTime : ''}
+                                    </div>
+                                    <div>
+                                        <span class="font-medium">${translations.category || 'Category'}:</span> ${exam.category}
+                                    </div>
+                                    ${exam.location ? `
+                                        <div class="col-span-2 md:col-span-4">
+                                            <span class="font-medium">${translations.location || 'Location'}:</span> ${exam.location}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="flex gap-2 ml-4">
+                                <button onclick="showExamModal(${index})" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="${translations.edit || 'Edit'}">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="deleteExam(${index})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="${translations.delete || 'Delete'}">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <button onclick="deleteExam(${index})" class="mt-2 text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        function addExam() {
-            exams.push({
-                code: '',
-                name: '',
-                date: new Date().toISOString().split('T')[0],
-                time: '08:00',
-                endTime: '',
-                category: 'General',
-                location: ''
-            });
-            renderExams();
-        }
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            const quickAddMenu = document.getElementById('quickAddMenu');
+            const quickAddBtn = e.target.closest('[onclick*="toggleQuickAddMenu"]');
 
-        function updateExam(index, field, value) {
-            exams[index][field] = value;
-        }
+            if (!quickAddBtn && !quickAddMenu.contains(e.target)) {
+                quickAddMenu.classList.add('hidden');
+            }
+        });
 
         function deleteExam(index) {
-            if (confirm('Delete this exam?')) {
+            const exam = exams[index];
+            const confirmMessage = `${translations.confirmDelete || 'Are you sure you want to delete this exam?'}\n\n"${exam.name}" (${exam.code})`;
+
+            if (confirm(confirmMessage)) {
                 exams.splice(index, 1);
                 renderExams();
             }
@@ -162,7 +649,8 @@
         async function saveConfig() {
             config.title = document.getElementById('configTitle').value;
             config.description = document.getElementById('configDesc').value;
-            
+            config.language = document.getElementById('configLanguage').value;
+
             try {
                 const res = await fetch('/api/config', {
                     method: 'POST',
@@ -173,12 +661,15 @@
                     body: JSON.stringify(config)
                 });
                 if (res.ok) {
-                    alert('Config saved!');
+                    // Reload translations if language changed
+                    await loadTranslations(config.language);
+                    updateAdminUIWithTranslations();
+                    alert(translations.configSaved || 'Config saved!');
                 } else {
-                    alert('Failed to save config');
+                    alert(translations.error || 'Failed to save config');
                 }
             } catch (error) {
-                alert('Error saving config');
+                alert(translations.error || 'Error saving config');
             }
         }
 
@@ -193,12 +684,12 @@
                     body: JSON.stringify(exams)
                 });
                 if (res.ok) {
-                    alert('Exams saved!');
+                    alert(translations.examsSaved || 'Exams saved!');
                 } else {
-                    alert('Failed to save exams');
+                    alert(translations.error || 'Failed to save exams');
                 }
             } catch (error) {
-                alert('Error saving exams');
+                alert(translations.error || 'Error saving exams');
             }
         }
     </script>

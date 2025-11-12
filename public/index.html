@@ -33,7 +33,8 @@
                     </svg>
                     <span id="currentTime"></span>
                 </div>
-                <a href="/admin" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold">Admin</a>
+                 <button onclick="switchLanguage()" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold mr-4" id="languageButton">EN</button>
+                 <a href="/admin" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold">Admin</a>
             </div>
         </div>
 
@@ -41,7 +42,7 @@
             <div class="glass-card rounded-2xl p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Completed</p>
+                        <p class="text-gray-600 text-sm font-medium" data-translate="completed">Completed</p>
                         <p class="text-3xl font-bold text-green-600" id="completedCount">0</p>
                     </div>
                     <div class="bg-gradient-to-br from-green-400 to-green-600 p-3 rounded-2xl shadow-lg">
@@ -54,7 +55,7 @@
             <div class="glass-card rounded-2xl p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">In Progress</p>
+                        <p class="text-gray-600 text-sm font-medium" data-translate="inProgress">In Progress</p>
                         <p class="text-3xl font-bold text-blue-600" id="inProgressCount">0</p>
                     </div>
                     <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-3 rounded-2xl shadow-lg">
@@ -67,7 +68,7 @@
             <div class="glass-card rounded-2xl p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Upcoming</p>
+                        <p class="text-gray-600 text-sm font-medium" data-translate="upcoming">Upcoming</p>
                         <p class="text-3xl font-bold text-orange-600" id="upcomingCount">0</p>
                     </div>
                     <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-3 rounded-2xl shadow-lg">
@@ -114,6 +115,55 @@
         let timelineFilterSubject = 'all';
         let searchQuery = '';
         let selectedCategory = 'all';
+        let translations = {};
+        let currentLanguage = 'en';
+
+        async function loadTranslations(lang = 'en') {
+            try {
+                const res = await fetch(`/api/translations?lang=${lang}`);
+                translations = await res.json();
+                currentLanguage = lang;
+            } catch (error) {
+                console.error('Failed to load translations:', error);
+                // Fallback to English
+                translations = {};
+                currentLanguage = 'en';
+            }
+        }
+
+        async function switchLanguage() {
+            const newLang = currentLanguage === 'en' ? 'ms' : 'en';
+            await loadTranslations(newLang);
+            updateLanguageButton();
+            updateUIWithTranslations();
+            renderCategoryFilter();
+            renderSubjectSelection();
+            updateFilterDropdown();
+            renderTimeline();
+            updateCounts();
+        }
+
+        function updateLanguageButton() {
+            const button = document.getElementById('languageButton');
+            button.textContent = currentLanguage === 'en' ? 'BM' : 'EN';
+        }
+
+        function updateUIWithTranslations() {
+            // Update search placeholder
+            const searchInput = document.querySelector('input[placeholder]');
+            if (searchInput) {
+                searchInput.placeholder = translations.searchExams || 'Search exams...';
+            }
+
+            // Update status labels in the header
+            const statusElements = document.querySelectorAll('[data-translate]');
+            statusElements.forEach(element => {
+                const key = element.dataset.translate;
+                if (translations[key]) {
+                    element.textContent = translations[key];
+                }
+            });
+        }
 
         async function loadData() {
             try {
@@ -121,21 +171,26 @@
                     fetch('/api/exams'),
                     fetch('/api/config')
                 ]);
-                
+
                 exams = await examsRes.json();
                 const config = await configRes.json();
-                
+
+                // Load translations for the configured language
+                await loadTranslations(config.language || 'en');
+                updateLanguageButton();
+
                 document.getElementById('pageTitle').textContent = config.title;
                 document.getElementById('mainTitle').textContent = config.title;
                 document.getElementById('mainDesc').textContent = config.description;
-                
+
                 selectedSubjects = JSON.parse(localStorage.getItem('selectedSubjects')) || exams.map(e => e.code);
-                
+
                 renderCategoryFilter();
                 renderSubjectSelection();
                 updateFilterDropdown();
                 renderTimeline();
                 updateCounts();
+                updateUIWithTranslations();
             } catch (error) {
                 console.error('Failed to load data:', error);
                 document.getElementById('examTimeline').innerHTML = '<p class="text-center text-gray-600">No exams configured. Please contact admin.</p>';
@@ -211,10 +266,10 @@
             const container = document.getElementById('categoryFilter');
             
             container.innerHTML = categories.map(cat => `
-                <button onclick="filterByCategory('${cat}')" 
-                        id="cat-${cat}" 
+                <button onclick="filterByCategory('${cat}')"
+                        id="cat-${cat}"
                         class="px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedCategory === cat ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700 border border-gray-300'}">
-                    ${cat === 'all' ? 'All Categories' : cat}
+                    ${cat === 'all' ? (translations.allCategories || 'All Categories') : cat}
                 </button>
             `).join('');
         }
@@ -315,9 +370,9 @@
                             ${examsOnDate.map(exam => {
                                 const status = getStatus(exam);
                                 const statusConfig = {
-                                    completed: { class: 'status-completed', text: 'text-green-700', badge: 'bg-green-500 text-white', icon: '✓', label: 'Completed' },
-                                    inProgress: { class: 'status-progress', text: 'text-blue-700', badge: 'bg-blue-500 text-white', icon: '🕐', label: 'In Progress' },
-                                    upcoming: { class: 'status-upcoming', text: 'text-orange-700', badge: 'bg-orange-500 text-white', icon: '🔔', label: 'Upcoming' }
+                                    completed: { class: 'status-completed', text: 'text-green-700', badge: 'bg-green-500 text-white', icon: '✓', label: translations.completed || 'Completed' },
+                                    inProgress: { class: 'status-progress', text: 'text-blue-700', badge: 'bg-blue-500 text-white', icon: '🕐', label: translations.inProgress || 'In Progress' },
+                                    upcoming: { class: 'status-upcoming', text: 'text-orange-700', badge: 'bg-orange-500 text-white', icon: '🔔', label: translations.upcoming || 'Upcoming' }
                                 };
                                 const config = statusConfig[status];
                                 
