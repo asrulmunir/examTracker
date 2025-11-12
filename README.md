@@ -89,6 +89,41 @@ Visit your deployed URL to see the exam tracker.
 4. Add/edit/delete exams
 5. Save changes
 
+## Updating
+
+### From v1.0.0 to v1.0.1
+
+If you have an existing v1.0.0 deployment and want to update to v1.0.1 with the new features:
+
+```bash
+# Pull latest changes
+git pull origin master
+
+# Redeploy (this will update your existing worker)
+npx wrangler deploy
+```
+
+**✅ What's preserved:**
+- Your existing KV namespace and data
+- Custom worker name
+- Admin password settings
+- All your exam data
+
+**✨ What's new in v1.0.1:**
+- 🌍 Dual-language support (English/Malay)
+- 🎨 Enhanced admin interface with modal editor
+- ⚡ Quick add buttons for rapid exam creation
+- 📥 Bulk import/export functionality
+- 🔧 Improved form validation and UX
+
+### General Updates
+
+Made changes to your local copy? Just redeploy:
+
+```bash
+npx wrangler deploy
+```
+
 ## Configuration
 
 ### Change Admin Password
