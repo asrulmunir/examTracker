@@ -2,6 +2,52 @@
 
 All notable changes to Exam Tracker will be documented in this file.
 
+## [1.0.1] - 2025-11-12
+
+### ✨ Major Enhancements
+
+#### 🌍 Dual-Language Support
+- Added complete English/Malay (Bahasa Melayu) language switching
+- Real-time language toggle on both public and admin interfaces
+- Comprehensive translations for all UI elements, forms, and messages
+- Language preference saved in admin configuration
+
+#### 🎨 Enhanced Admin Interface
+- **Modal-based exam editor** with improved UX and validation
+- **Quick add buttons** for rapid exam creation (Today, Tomorrow, This Week)
+- **Bulk import/export** functionality with JSON support
+- **Form validation** with helpful error messages and field validation
+- **Help tooltips** for complex form fields
+- **Free-text category input** instead of predefined dropdown
+- **Improved visual design** with better card layouts and status indicators
+
+#### 🔧 Technical Improvements
+- Added comprehensive translations system (`src/translations.js`)
+- Enhanced error handling throughout the application
+- Improved form validation with client-side checks
+- Better user feedback and loading states
+- Added AGENTS.md for AI coding assistant guidelines
+
+#### 📱 User Experience
+- **Better form organization** with logical field grouping
+- **Contextual help** with tooltips and help text
+- **Improved error messages** in both languages
+- **Enhanced keyboard navigation** and accessibility
+- **Responsive modal design** that works on all screen sizes
+
+### 🐛 Bug Fixes
+- Fixed admin interface status display issues
+- Resolved JavaScript errors in exam management
+- Improved error handling for edge cases
+
+### 📚 Documentation
+- Updated README.md with new features
+- Added AGENTS.md for AI assistant integration
+- Enhanced inline code comments
+- Updated deployment instructions
+
+---
+
 ## [1.0.0] - 2025-11-08
 
 ### 🎉 Initial Release
