@@ -201,7 +201,7 @@
 
                                     <div class="flex justify-end gap-3">
                                         <button onclick="hideBulkImportModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50" data-translate="cancel">Cancel</button>
-                                        <button onclick="processBulkImport()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold" data-translate="importFromJson">Import from JSON</button>
+                                        <button onclick="handleBulkImport()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold" data-translate="importFromJson">Import from JSON</button>
                                     </div>
                                 </div>
                             </div>
@@ -221,9 +221,9 @@
                                     Quick Add
                                 </button>
                                 <div id="quickAddMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border hidden z-10">
-                                    <button onclick="quickAddExam('today')" class="block w-full text-left px-4 py-2 hover:bg-gray-100 first:rounded-t-lg" data-translate="addToday">Add Today</button>
-                                    <button onclick="quickAddExam('tomorrow')" class="block w-full text-left px-4 py-2 hover:bg-gray-100" data-translate="addTomorrow">Add Tomorrow</button>
-                                    <button onclick="quickAddExam('week')" class="block w-full text-left px-4 py-2 hover:bg-gray-100 last:rounded-b-lg" data-translate="addThisWeek">Add This Week</button>
+                                    <button onclick="quickAddToday()" class="block w-full text-left px-4 py-2 hover:bg-gray-100 first:rounded-t-lg" data-translate="addToday">Add Today</button>
+                                    <button onclick="quickAddTomorrow()" class="block w-full text-left px-4 py-2 hover:bg-gray-100" data-translate="addTomorrow">Add Tomorrow</button>
+                                    <button onclick="quickAddWeek()" class="block w-full text-left px-4 py-2 hover:bg-gray-100 last:rounded-b-lg" data-translate="addThisWeek">Add This Week</button>
                                 </div>
                             </div>
                             <button onclick="showBulkImport()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700" data-translate="bulkImport">Bulk Import</button>
@@ -426,7 +426,7 @@
         }
 
         // Form submission
-        document.getElementById('examForm').addEventListener('submit', function(e) {
+        document.getElementById('examForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             if (!validateExamForm()) {
@@ -457,6 +457,11 @@
             renderExams();
             hideExamModal();
         });
+
+        // Quick add wrapper functions (for onclick handlers)
+        function quickAddToday() { quickAddExam('today'); }
+        function quickAddTomorrow() { quickAddExam('tomorrow'); }
+        function quickAddWeek() { quickAddExam('week'); }
 
         // Quick add functions
         async function quickAddExam(type) {
@@ -496,6 +501,9 @@
             renderExams();
             toggleQuickAddMenu();
         }
+
+        // Bulk import wrapper function
+        function handleBulkImport() { processBulkImport(); }
 
         // Bulk import
         async function processBulkImport() {
